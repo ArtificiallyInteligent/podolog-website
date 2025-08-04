@@ -516,23 +516,6 @@ function App() {
                   </div>
                 </div>
               </div>
-
-              {/* Google Maps */}
-              <div className="mt-8">
-                <h4 className="text-xl font-bold mb-4">Lokalizacja</h4>
-                <div className="w-full h-64 rounded-lg overflow-hidden shadow-lg">
-                  <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2548.8234567890123!2d19.1234567890123!3d50.2914567890123!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4716f0a1234567890%3A0x1234567890abcdef!2sModrzejowska%2029%2C%2041-200%20Sosnowiec!5e0!3m2!1spl!2spl!4v1234567890123"
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    allowFullScreen={true}
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    title="Lokalizacja gabinetu"
-                  ></iframe>
-                </div>
-              </div>
             </div>
 
             {/* Contact Form */}
@@ -615,6 +598,62 @@ function App() {
                   Wyślij zgłoszenie
                 </Button>
               </form>
+            </div>
+          </div>
+
+          {/* Google Maps - Full Width */}
+          <div className="mt-16">
+            <h3 className="text-3xl font-bold mb-8 text-center">Lokalizacja gabinetu</h3>
+            <div className="google-map-container w-full max-w-5xl mx-auto">
+              {/* Map container with enhanced styling */}
+              <div className="w-full h-96 md:h-[400px] lg:h-[450px] rounded-lg overflow-hidden relative">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2548.6513985826547!2d19.09788037650984!3d50.29147511109058!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4716f019e6e9a5f5%3A0x7c7e1b7c8f8e9f0!2sModrzejowska%2029%2C%2041-200%20Sosnowiec!5e0!3m2!1spl!2spl!4v1691234567890"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen={true}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Lokalizacja gabinetu podologicznego"
+                  className="google-map-iframe"
+                ></iframe>
+                
+                {/* Przycisk "Otwórz w Google Maps" - wycentrowany na dole */}
+                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+                  <a
+                    href="https://www.google.com/maps/place/Modrzejowska+29,+41-200+Sosnowiec"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="map-button text-white px-4 py-2 rounded-lg text-sm font-medium shadow-lg transition-all duration-300 flex items-center space-x-2"
+                  >
+                    <MapPin className="w-4 h-4" />
+                    <span>Otwórz w Google Maps</span>
+                  </a>
+                </div>
+              </div>
+              
+              {/* Dodatkowe informacje pod mapą */}
+              <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 text-sm">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span className="text-gray-700">Łatwy dojazd komunikacją publiczną</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <span className="text-gray-700">Parking dostępny w okolicy</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                    <span className="text-gray-700">10 min pieszo od dworca</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                    <span className="text-gray-700">Dostęp dla osób niepełnosprawnych</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
