@@ -8,6 +8,21 @@
     - kliknięcie nagłówka podmienia wyświetlane karty na zawartość z pliku 'usługi-podologiczne.txt'
     - smooth animations/transitions
     - usunąć podawanie ceny w kartach
+⦁   Aktualizacja zdjęć (frontend):
+    - W sekcji 'O naszym gabinecie' zamień zdjęcia na grafikę 'podolog-website\image.webp'
+    - Pozostałe grafiki na stronie zamień na bardziej profesjonalne/adekwatne
+⦁   Aktualizacja danych na rzeczywiste :
+    - nazwa: Gabinet Podologiczny Michalina Rygalska
+    - adres: Modrzejowska 29, 41-200 Sosnowiec
+    - tel: 513 033 294
+    - godziny otwarcia:
+        poniedziałek	08:00–20:00
+        wtorek	08:00–20:00
+        środa	08:00–20:00
+        czwartek	08:00–20:00
+        piątek	08:00–20:00
+        sobota	Zamknięte
+        niedziela	Zamknięte
 
 # Do wdrożenia poźniej
 ⦁   Panel administracyjny do zarządzania rezerwacjami

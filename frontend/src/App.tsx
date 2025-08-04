@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Button } from './components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from './components/ui/card'
 import { Input } from './components/ui/input'
 import { Textarea } from './components/ui/textarea'
-import { Badge } from './components/ui/badge'
+import { NavigationLink } from './components/NavigationLink'
+import { ScrollToTopButton } from './components/ScrollToTopButton'
 import { 
   Phone, 
   Mail, 
@@ -11,19 +12,19 @@ import {
   Clock, 
   Star, 
   Calendar, 
-  Heart, 
   Shield, 
   Award,
   Menu,
   X,
   CheckCircle,
-  Sparkles
+  Sparkles,
+  Stethoscope
 } from 'lucide-react'
 import './App.css'
 
 function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
+  const [activeServiceCategory, setActiveServiceCategory] = useState('podstawowe')
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -33,18 +34,10 @@ function App() {
     message: ''
   })
 
-  // Placeholder images
+  // Images
   const gabinetImage1 = "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=800&h=600&fit=crop"
-  const gabinetImage2 = "https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=400&h=300&fit=crop"
+  const gabinetMainImage = "/image.webp" // Główne zdjęcie gabinetu
   const pielegnacjaImage1 = "https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=400&h=300&fit=crop"
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
-    }
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
@@ -85,31 +78,102 @@ function App() {
     }
   }
 
-  const services = [
-    {
-      title: 'Pedicure podologiczny',
-      description: 'Profesjonalna pielęgnacja stóp z usuwaniem modzeli i nagniotków',
-      price: 'od 80 zł',
-      icon: <Sparkles className="w-6 h-6 text-white" />
-    },
-    {
-      title: 'Leczenie wrastających paznokci',
-      description: 'Bezbolesne leczenie wrastających paznokci metodą klamrową',
-      price: 'od 120 zł',
-      icon: <Heart className="w-6 h-6 text-white" />
-    },
-    {
-      title: 'Usuwanie brodawek',
-      description: 'Skuteczne usuwanie brodawek wirusowych metodami podologicznymi',
-      price: 'od 100 zł',
-      icon: <Shield className="w-6 h-6 text-white" />
-    },
-    {
-      title: 'Orteza na paznokcie',
-      description: 'Korekcja kształtu paznokci za pomocą specjalnych ortez',
-      price: 'od 150 zł',
-      icon: <Award className="w-6 h-6 text-white" />
-    }
+  const services = {
+    podstawowe: [
+      {
+        title: 'Konsultacja podologiczna',
+        description: 'Profesjonalna ocena stanu zdrowia stóp i doradztwo',
+        icon: <Stethoscope className="w-6 h-6 text-white" />
+      },
+      {
+        title: 'Podstawowy zabieg podologiczny',
+        description: 'Kompleksowa pielęgnacja stóp z profesjonalnym podejściem',
+        icon: <Sparkles className="w-6 h-6 text-white" />
+      },
+      {
+        title: 'Obcięcie paznokci',
+        description: 'Prawidłowe obcięcie paznokci u stóp metodą podologiczną',
+        icon: <Shield className="w-6 h-6 text-white" />
+      },
+      {
+        title: 'Pękające pięty',
+        description: 'Leczenie i pielęgnacja pękających pięt',
+        icon: <Award className="w-6 h-6 text-white" />
+      }
+    ],
+    specjalistyczne: [
+      {
+        title: 'Usuwanie odcisków i modzeli',
+        description: 'Bezbolesne usuwanie odcisków i modzeli z zastosowaniem profesjonalnych narzędzi',
+        icon: <Shield className="w-6 h-6 text-white" />
+      },
+      {
+        title: 'Leczenie brodawek',
+        description: 'Skuteczne leczenie brodawek wirusowych metodami podologicznymi',
+        icon: <Sparkles className="w-6 h-6 text-white" />
+      },
+      {
+        title: 'Rekonstrukcja paznokci',
+        description: 'Odbudowa uszkodzonych lub brakujących paznokci',
+        icon: <Award className="w-6 h-6 text-white" />
+      },
+      {
+        title: 'Badanie mykologiczne',
+        description: 'Diagnostyka grzybicy paznokci i stóp',
+        icon: <Stethoscope className="w-6 h-6 text-white" />
+      }
+    ],
+    korekcja: [
+      {
+        title: 'Leczenie wrastających paznokci',
+        description: 'Bezbolesne leczenie wrastających paznokci metodą klamrową',
+        icon: <Shield className="w-6 h-6 text-white" />
+      },
+      {
+        title: 'Tamponada',
+        description: 'Metoda leczenia wrastających paznokci z użyciem tamponady',
+        icon: <Sparkles className="w-6 h-6 text-white" />
+      },
+      {
+        title: 'Orteza',
+        description: 'Korekcja kształtu paznokci za pomocą specjalnych ortez',
+        icon: <Award className="w-6 h-6 text-white" />
+      },
+      {
+        title: 'Separator palców',
+        description: 'Korekcja ustawienia palców stóp',
+        icon: <Stethoscope className="w-6 h-6 text-white" />
+      },
+      {
+        title: 'Klin silikonowy',
+        description: 'Zastosowanie klinów silikonowych do korekcji',
+        icon: <Shield className="w-6 h-6 text-white" />
+      }
+    ],
+    dodatkowe: [
+      {
+        title: 'Taping (kinesiotaping)',
+        description: 'Terapeutyczne oklejanie stóp taśmami kinesio',
+        icon: <Award className="w-6 h-6 text-white" />
+      },
+      {
+        title: 'Wizyty domowe',
+        description: 'Profesjonalna opieka podologiczna w zaciszu własnego domu',
+        icon: <Stethoscope className="w-6 h-6 text-white" />
+      },
+      {
+        title: 'Leczenie onycholizy',
+        description: 'Leczenie odwarstwienia płytki paznokciowej',
+        icon: <Shield className="w-6 h-6 text-white" />
+      }
+    ]
+  }
+
+  const serviceCategories = [
+    { id: 'podstawowe', name: 'PODSTAWOWE ZABIEGI' },
+    { id: 'specjalistyczne', name: 'ZABIEGI SPECJALISTYCZNE' },
+    { id: 'korekcja', name: 'KOREKCJA I ORTOPEDIA' },
+    { id: 'dodatkowe', name: 'USŁUGI DODATKOWE' }
   ]
 
   const testimonials = [
@@ -133,26 +197,35 @@ function App() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'sticky-header' : 'bg-white'}`}>
+      <header className="fixed top-0 w-full z-50 sticky-header">
         <div className="container-custom">
           <div className="flex items-center justify-between py-4">
             <div className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center">
-                <Heart className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                <Stethoscope className="w-6 h-6 text-white" />
               </div>
-              <span className="text-xl font-bold text-gradient">PodoMed</span>
+              <span className="text-xl font-bold text-blue-600 hidden md:block">podolog M. Rygalska</span>
+              <span className="text-xl font-bold text-blue-600 md:hidden">podolog M. Rygalska</span>
             </div>
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-8">
-              <a href="#home" className="text-gray-700 hover:text-primary transition-colors">Strona główna</a>
-              <a href="#services" className="text-gray-700 hover:text-primary transition-colors">Usługi</a>
-              <a href="#about" className="text-gray-700 hover:text-primary transition-colors">O nas</a>
-              <a href="#contact" className="text-gray-700 hover:text-primary transition-colors">Kontakt</a>
+              <NavigationLink href="#home" className="text-gray-700 hover:text-blue-600 transition-colors">
+                Strona główna
+              </NavigationLink>
+              <NavigationLink href="#services" className="text-gray-700 hover:text-blue-600 transition-colors">
+                Usługi
+              </NavigationLink>
+              <NavigationLink href="#about" className="text-gray-700 hover:text-blue-600 transition-colors">
+                O nas
+              </NavigationLink>
+              <NavigationLink href="#contact" className="text-gray-700 hover:text-blue-600 transition-colors">
+                Kontakt
+              </NavigationLink>
             </nav>
 
             <div className="hidden md:flex items-center space-x-4">
-              <Button className="btn-primary">
+              <Button className="btn-primary" size="lg">
                 <Calendar className="w-4 h-4 mr-2" />
                 Umów wizytę
               </Button>
@@ -171,11 +244,35 @@ function App() {
           {isMenuOpen && (
             <nav className="md:hidden py-4 border-t">
               <div className="flex flex-col space-y-4">
-                <a href="#home" className="text-gray-700 hover:text-primary transition-colors">Strona główna</a>
-                <a href="#services" className="text-gray-700 hover:text-primary transition-colors">Usługi</a>
-                <a href="#about" className="text-gray-700 hover:text-primary transition-colors">O nas</a>
-                <a href="#contact" className="text-gray-700 hover:text-primary transition-colors">Kontakt</a>
-                <Button className="btn-primary w-full">
+                <NavigationLink 
+                  href="#home" 
+                  className="text-gray-700 hover:text-blue-600 transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Strona główna
+                </NavigationLink>
+                <NavigationLink 
+                  href="#services" 
+                  className="text-gray-700 hover:text-blue-600 transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Usługi
+                </NavigationLink>
+                <NavigationLink 
+                  href="#about" 
+                  className="text-gray-700 hover:text-blue-600 transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  O nas
+                </NavigationLink>
+                <NavigationLink 
+                  href="#contact" 
+                  className="text-gray-700 hover:text-blue-600 transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Kontakt
+                </NavigationLink>
+                <Button className="btn-primary w-full" size="lg">
                   <Calendar className="w-4 h-4 mr-2" />
                   Umów wizytę
                 </Button>
@@ -191,18 +288,18 @@ function App() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="animate-fade-in">
               <h1 className="text-4xl md:text-6xl font-bold mb-6">
-                Profesjonalna pielęgnacja stóp
+                Gabinet Podologiczny Michalina Rygalska
               </h1>
               <p className="text-xl mb-8 opacity-90">
                 Zadbaj o zdrowie swoich stóp w naszym nowoczesnym gabinecie podologicznym. 
                 Oferujemy kompleksową opiekę i najnowsze metody leczenia.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="bg-white text-primary hover:bg-gray-100">
+                <Button size="lg" className="btn-primary">
                   <Calendar className="w-5 h-5 mr-2" />
                   Umów wizytę online
                 </Button>
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-primary">
+                <Button size="lg" className="btn-white">
                   <Phone className="w-5 h-5 mr-2" />
                   Zadzwoń teraz
                 </Button>
@@ -253,17 +350,32 @@ function App() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {services.map((service, index) => (
+          {/* Service Category Tabs */}
+          <div className="flex flex-wrap justify-center gap-4 mb-12">
+            {serviceCategories.map((category) => (
+              <button
+                key={category.id}
+                onClick={() => setActiveServiceCategory(category.id)}
+                className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
+                  activeServiceCategory === category.id
+                    ? 'bg-gradient-to-r from-yellow-500 to-yellow-400 text-white shadow-lg'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {category.name}
+              </button>
+            ))}
+          </div>
+
+          {/* Service Cards */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {services[activeServiceCategory as keyof typeof services].map((service, index) => (
               <Card key={index} className="card-hover border-0 shadow-lg">
                 <CardHeader className="text-center">
                   <div className="service-icon">
                     {service.icon}
                   </div>
                   <CardTitle className="text-xl">{service.title}</CardTitle>
-                  <Badge variant="secondary" className="text-primary font-semibold">
-                    {service.price}
-                  </Badge>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600 text-center">{service.description}</p>
@@ -306,7 +418,7 @@ function App() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <img 
-                src={gabinetImage2} 
+                src={gabinetMainImage} 
                 alt="Gabinet podologiczny wnętrze" 
                 className="rounded-lg shadow-lg"
               />
@@ -354,7 +466,7 @@ function App() {
             <p className="text-xl text-gray-600">Umów wizytę lub zadaj pytanie</p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-12">
+          <div className="grid lg:grid-cols-3 gap-12">
             {/* Contact Info */}
             <div>
               <h3 className="text-2xl font-bold mb-6">Informacje kontaktowe</h3>
@@ -366,7 +478,7 @@ function App() {
                   </div>
                   <div>
                     <div className="font-semibold">Telefon</div>
-                    <div className="text-gray-600">+48 123 456 789</div>
+                    <div className="text-gray-600">513 033 294</div>
                   </div>
                 </div>
 
@@ -376,7 +488,7 @@ function App() {
                   </div>
                   <div>
                     <div className="font-semibold">Email</div>
-                    <div className="text-gray-600">kontakt@podomed.pl</div>
+                    <div className="text-gray-600">kontakt@podolog-michalina.pl</div>
                   </div>
                 </div>
 
@@ -386,7 +498,7 @@ function App() {
                   </div>
                   <div>
                     <div className="font-semibold">Adres</div>
-                    <div className="text-gray-600">ul. Zdrowia 123<br />00-001 Warszawa</div>
+                    <div className="text-gray-600">Modrzejowska 29<br />41-200 Sosnowiec</div>
                   </div>
                 </div>
 
@@ -397,16 +509,34 @@ function App() {
                   <div>
                     <div className="font-semibold">Godziny otwarcia</div>
                     <div className="text-gray-600">
-                      Pon-Pt: 9:00-18:00<br />
-                      Sob: 9:00-14:00
+                      Pon-Pt: 08:00-20:00<br />
+                      Sob: Zamknięte<br />
+                      Ndz: Zamknięte
                     </div>
                   </div>
+                </div>
+              </div>
+
+              {/* Google Maps */}
+              <div className="mt-8">
+                <h4 className="text-xl font-bold mb-4">Lokalizacja</h4>
+                <div className="w-full h-64 rounded-lg overflow-hidden shadow-lg">
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2548.8234567890123!2d19.1234567890123!3d50.2914567890123!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4716f0a1234567890%3A0x1234567890abcdef!2sModrzejowska%2029%2C%2041-200%20Sosnowiec!5e0!3m2!1spl!2spl!4v1234567890123"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen={true}
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Lokalizacja gabinetu"
+                  ></iframe>
                 </div>
               </div>
             </div>
 
             {/* Contact Form */}
-            <div>
+            <div className="lg:col-span-2">
               <h3 className="text-2xl font-bold mb-6">Formularz kontaktowy</h3>
               
               <form onSubmit={handleSubmit} className="contact-form space-y-6">
@@ -451,10 +581,13 @@ function App() {
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                     >
                       <option value="">Wybierz usługę</option>
-                      <option value="pedicure">Pedicure podologiczny</option>
+                      <option value="konsultacja">Konsultacja podologiczna</option>
+                      <option value="podstawowy">Podstawowy zabieg podologiczny</option>
                       <option value="paznokcie">Leczenie wrastających paznokci</option>
-                      <option value="brodawki">Usuwanie brodawek</option>
+                      <option value="brodawki">Leczenie brodawek</option>
+                      <option value="odciski">Usuwanie odcisków i modzeli</option>
                       <option value="orteza">Orteza na paznokcie</option>
+                      <option value="wizyty-domowe">Wizyty domowe</option>
                     </select>
                   </div>
                 </div>
@@ -493,10 +626,10 @@ function App() {
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center space-x-2 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center">
-                  <Heart className="w-5 h-5 text-white" />
+                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                  <Stethoscope className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-xl font-bold">PodoMed</span>
+                <span className="text-xl font-bold">podolog M. Rygalska</span>
               </div>
               <p className="text-gray-400">
                 Profesjonalny gabinet podologiczny oferujący kompleksową opiekę nad zdrowiem stóp.
@@ -516,28 +649,31 @@ function App() {
             <div>
               <h4 className="font-semibold mb-4">Kontakt</h4>
               <ul className="space-y-2 text-gray-400">
-                <li>+48 123 456 789</li>
-                <li>kontakt@podomed.pl</li>
-                <li>ul. Zdrowia 123</li>
-                <li>00-001 Warszawa</li>
+                <li>513 033 294</li>
+                <li>kontakt@podolog-michalina.pl</li>
+                <li>Modrzejowska 29</li>
+                <li>41-200 Sosnowiec</li>
               </ul>
             </div>
 
             <div>
               <h4 className="font-semibold mb-4">Godziny otwarcia</h4>
               <ul className="space-y-2 text-gray-400">
-                <li>Poniedziałek - Piątek: 9:00-18:00</li>
-                <li>Sobota: 9:00-14:00</li>
+                <li>Poniedziałek - Piątek: 08:00-20:00</li>
+                <li>Sobota: Zamknięte</li>
                 <li>Niedziela: Zamknięte</li>
               </ul>
             </div>
           </div>
 
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 PodoMed. Wszystkie prawa zastrzeżone.</p>
+            <p>&copy; 2024 Gabinet Podologiczny Michalina Rygalska. Wszystkie prawa zastrzeżone.</p>
           </div>
         </div>
       </footer>
+
+      {/* Scroll to Top Button */}
+      <ScrollToTopButton />
     </div>
   )
 }

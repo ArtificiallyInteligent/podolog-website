@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
@@ -46,14 +49,14 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.4 0.15 220); /* Niebieski medyczny #2E86AB */
+  --primary: oklch(0.45 0.18 250); /* Niebieski medyczny #1E40AF */
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.6 0.15 140); /* Zielony #27AE60 */
-  --accent-foreground: oklch(0.985 0 0);
+  --accent: oklch(79.235% 0.15748 81.308); /* Złoty pomocniczy #F59E0B */
+  --accent-foreground: oklch(0.145 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
@@ -114,12 +117,15 @@
   body {
     @apply bg-background text-foreground;
   }
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 
 /* Niestandardowe style dla gabinetu podologicznego */
 .hero-gradient {
-  background: linear-gradient(135deg, #2E86AB 0%, #3498DB 100%);
+  background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
 }
 
 .card-hover {
@@ -128,21 +134,42 @@
 
 .card-hover:hover {
   transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(46, 134, 171, 0.15);
+  box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #27AE60 0%, #2ECC71 100%);
-  transition: all 0.3s ease-in-out;
+  background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%) !important;
+  color: white !important;
+  border: none !important;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out !important;
 }
 
 .btn-primary:hover {
-  transform: scale(1.05);
-  box-shadow: 0 10px 25px rgba(39, 174, 96, 0.3);
+  background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%) !important;
+  color: white !important;
+  border: none !important;
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4), 0 0 20px rgba(255, 255, 255, 0.3) !important;
+  transform: scale(1.05) !important;
+}
+
+/* Biały przycisk dla hero section */
+.btn-white {
+  background: white !important;
+  color: #3B82F6 !important;
+  border: 2px solid white !important;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out !important;
+}
+
+.btn-white:hover {
+  background: white !important;
+  color: #3B82F6 !important;
+  border: 2px solid white !important;
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3) !important;
+  transform: scale(1.05) !important;
 }
 
 .text-gradient {
-  background: linear-gradient(135deg, #2E86AB 0%, #27AE60 100%);
+  background: linear-gradient(135deg, #3B82F6 0%, #F59E0B 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -180,15 +207,17 @@
 }
 
 .sticky-header {
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.95);
-  border-bottom: 1px solid rgba(46, 134, 171, 0.1);
+  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.85);
+  border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
 }
 
 .service-icon {
   width: 60px;
   height: 60px;
-  background: linear-gradient(135deg, #2E86AB 0%, #3498DB 100%);
+  background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -198,7 +227,7 @@
 
 .testimonial-card {
   background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-  border-left: 4px solid #2E86AB;
+  border-left: 4px solid #3B82F6;
 }
 
 .contact-form input,
@@ -208,6 +237,69 @@
 
 .contact-form input:focus,
 .contact-form textarea:focus {
-  border-color: #2E86AB;
-  box-shadow: 0 0 0 3px rgba(46, 134, 171, 0.1);
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
+
+/* Smooth animations for service categories */
+.service-category-btn {
+  transition: all 0.3s ease-in-out;
+}
+
+.service-category-btn.active {
+  background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+}
+
+.service-cards-container {
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.service-cards-container.fade-out {
+  opacity: 0;
+}
+
+/* Enhanced hover effects */
+.card-hover:hover .service-icon {
+  transform: scale(1.1);
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Navigation smooth scroll styling */
+nav a {
+  transition: color 0.3s ease-in-out;
+}
+
+/* Button animations */
+button {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Mobile menu animations */
+.mobile-menu {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Smooth scrolling enhancements */
+html {
+  scroll-behavior: auto; /* Wyłączamy natywne, używamy JavaScript */
+}
+
+/* Offset for fixed navbar when scrolling to sections */
+@media (min-width: 768px) {
+  section[id] {
+    scroll-margin-top: 80px; /* Wysokość navbar */
+  }
+}
+
+@media (max-width: 767px) {
+  section[id] {
+    scroll-margin-top: 60px; /* Mniejszy offset na mobile */
+  }
+}
+
+/* Custom smooth scroll with easing for better UX */
+/* Używamy tylko JavaScript dla pełnej kontroli */
+
