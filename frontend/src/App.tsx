@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import { Button } from './components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from './components/ui/card'
+import { Card, CardContent } from './components/ui/card'
 import { Input } from './components/ui/input'
 import { Textarea } from './components/ui/textarea'
 import { NavigationLink } from './components/NavigationLink'
 import { ScrollToTopButton } from './components/ScrollToTopButton'
+import { FeatureCarousel } from './components/AnimatedFeature'
 import { 
   Phone, 
   Mail, 
@@ -24,7 +25,6 @@ import './App.css'
 
 function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [activeServiceCategory, setActiveServiceCategory] = useState('podstawowe')
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -35,7 +35,6 @@ function App() {
   })
 
   // Images
-  const gabinetImage1 = "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=800&h=600&fit=crop"
   const gabinetMainImage = "/image.webp" // Główne zdjęcie gabinetu
   const pielegnacjaImage1 = "https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=400&h=300&fit=crop"
 
@@ -81,21 +80,29 @@ function App() {
   const services = {
     podstawowe: [
       {
+        id: 'konsultacja-podologiczna',
+        name: 'Konsultacja podologiczna',
         title: 'Konsultacja podologiczna',
         description: 'Profesjonalna ocena stanu zdrowia stóp i doradztwo',
         icon: <Stethoscope className="w-6 h-6 text-white" />
       },
       {
+        id: 'podstawowy-zabieg',
+        name: 'Podstawowy zabieg podologiczny',
         title: 'Podstawowy zabieg podologiczny',
         description: 'Kompleksowa pielęgnacja stóp z profesjonalnym podejściem',
         icon: <Sparkles className="w-6 h-6 text-white" />
       },
       {
+        id: 'obciecie-paznokci',
+        name: 'Obcięcie paznokci',
         title: 'Obcięcie paznokci',
         description: 'Prawidłowe obcięcie paznokci u stóp metodą podologiczną',
         icon: <Shield className="w-6 h-6 text-white" />
       },
       {
+        id: 'pekajace-piety',
+        name: 'Pękające pięty',
         title: 'Pękające pięty',
         description: 'Leczenie i pielęgnacja pękających pięt',
         icon: <Award className="w-6 h-6 text-white" />
@@ -103,21 +110,29 @@ function App() {
     ],
     specjalistyczne: [
       {
+        id: 'usuwanie-odciskow',
+        name: 'Usuwanie odcisków i modzeli',
         title: 'Usuwanie odcisków i modzeli',
         description: 'Bezbolesne usuwanie odcisków i modzeli z zastosowaniem profesjonalnych narzędzi',
         icon: <Shield className="w-6 h-6 text-white" />
       },
       {
+        id: 'leczenie-brodawek',
+        name: 'Leczenie brodawek',
         title: 'Leczenie brodawek',
         description: 'Skuteczne leczenie brodawek wirusowych metodami podologicznymi',
         icon: <Sparkles className="w-6 h-6 text-white" />
       },
       {
+        id: 'rekonstrukcja-paznokci',
+        name: 'Rekonstrukcja paznokci',
         title: 'Rekonstrukcja paznokci',
         description: 'Odbudowa uszkodzonych lub brakujących paznokci',
         icon: <Award className="w-6 h-6 text-white" />
       },
       {
+        id: 'badanie-mykologiczne',
+        name: 'Badanie mykologiczne',
         title: 'Badanie mykologiczne',
         description: 'Diagnostyka grzybicy paznokci i stóp',
         icon: <Stethoscope className="w-6 h-6 text-white" />
@@ -125,45 +140,61 @@ function App() {
     ],
     korekcja: [
       {
+        id: 'leczenie-wrastajacych',
+        name: 'Leczenie wrastających paznokci',
         title: 'Leczenie wrastających paznokci',
         description: 'Bezbolesne leczenie wrastających paznokci metodą klamrową',
         icon: <Shield className="w-6 h-6 text-white" />
       },
       {
+        id: 'tamponada',
+        name: 'Tamponada',
         title: 'Tamponada',
         description: 'Metoda leczenia wrastających paznokci z użyciem tamponady',
         icon: <Sparkles className="w-6 h-6 text-white" />
       },
       {
+        id: 'orteza',
+        name: 'Orteza',
         title: 'Orteza',
         description: 'Korekcja kształtu paznokci za pomocą specjalnych ortez',
         icon: <Award className="w-6 h-6 text-white" />
       },
       {
+        id: 'separator-palcow',
+        name: 'Separator palców',
         title: 'Separator palców',
         description: 'Korekcja ustawienia palców stóp',
         icon: <Stethoscope className="w-6 h-6 text-white" />
-      },
-      {
-        title: 'Klin silikonowy',
-        description: 'Zastosowanie klinów silikonowych do korekcji',
-        icon: <Shield className="w-6 h-6 text-white" />
       }
     ],
     dodatkowe: [
       {
+        id: 'taping',
+        name: 'Taping (kinesiotaping)',
         title: 'Taping (kinesiotaping)',
         description: 'Terapeutyczne oklejanie stóp taśmami kinesio',
         icon: <Award className="w-6 h-6 text-white" />
       },
       {
+        id: 'wizyty-domowe',
+        name: 'Wizyty domowe',
         title: 'Wizyty domowe',
         description: 'Profesjonalna opieka podologiczna w zaciszu własnego domu',
         icon: <Stethoscope className="w-6 h-6 text-white" />
       },
       {
+        id: 'leczenie-onycholizy',
+        name: 'Leczenie onycholizy',
         title: 'Leczenie onycholizy',
         description: 'Leczenie odwarstwienia płytki paznokciowej',
+        icon: <Shield className="w-6 h-6 text-white" />
+      },
+      {
+        id: 'klin-silikonowy',
+        name: 'Klin silikonowy',
+        title: 'Klin silikonowy',
+        description: 'Zastosowanie klinów silikonowych do korekcji',
         icon: <Shield className="w-6 h-6 text-white" />
       }
     ]
@@ -197,7 +228,7 @@ function App() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 sticky-header">
+      <header className="fixed top-0 w-full z-50 bg-transparent backdrop-blur-sm">
         <div className="container-custom">
           <div className="flex items-center justify-between py-4">
             <div className="flex items-center space-x-2">
@@ -222,17 +253,14 @@ function App() {
               <NavigationLink href="#contact" className="text-gray-700 hover:text-blue-600 transition-colors">
                 Kontakt
               </NavigationLink>
-            </nav>
-
-            <div className="hidden md:flex items-center space-x-4">
-              <Button className="btn-primary" size="lg">
+              <Button className="btn-primary">
                 <Calendar className="w-4 h-4 mr-2" />
                 Umów wizytę
               </Button>
-            </div>
+            </nav>
 
             {/* Mobile Menu Button */}
-            <button 
+            <button
               className="md:hidden"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
@@ -242,7 +270,7 @@ function App() {
 
           {/* Mobile Navigation */}
           {isMenuOpen && (
-            <nav className="md:hidden py-4 border-t">
+            <nav className="md:hidden py-4 border-t border-gray-200">
               <div className="flex flex-col space-y-4">
                 <NavigationLink 
                   href="#home" 
@@ -283,17 +311,25 @@ function App() {
       </header>
 
       {/* Hero Section */}
-      <section id="home" className="hero-gradient text-white section-padding pt-24">
-        <div className="container-custom">
+      <section 
+        id="home" 
+        className="relative text-white section-padding pt-24 min-h-screen flex items-center"
+        style={{
+          backgroundImage: 'url(/hero.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          transform: 'scaleX(-1)'
+        }}
+      >
+        {/* Overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/40"></div>
+        
+        <div className="container-custom relative z-10" style={{ transform: 'scaleX(-1)' }}>
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="animate-fade-in">
-              <h1 className="text-4xl md:text-6xl font-bold mb-6">
-                Gabinet Podologiczny Michalina Rygalska
+              <h1 className="text-4xl md:text-6xl font-bold mb-8 font-serif">
+                Zadbajmy o Twoje stopy
               </h1>
-              <p className="text-xl mb-8 opacity-90">
-                Zadbaj o zdrowie swoich stóp w naszym nowoczesnym gabinecie podologicznym. 
-                Oferujemy kompleksową opiekę i najnowsze metody leczenia.
-              </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button size="lg" className="btn-primary">
                   <Calendar className="w-5 h-5 mr-2" />
@@ -304,13 +340,6 @@ function App() {
                   Zadzwoń teraz
                 </Button>
               </div>
-            </div>
-            <div className="relative">
-              <img 
-                src={gabinetImage1} 
-                alt="Gabinet podologiczny" 
-                className="rounded-2xl shadow-2xl w-full h-auto"
-              />
             </div>
           </div>
         </div>
@@ -350,38 +379,12 @@ function App() {
             </p>
           </div>
 
-          {/* Service Category Tabs */}
-          <div className="flex flex-wrap justify-center gap-4 mb-12">
-            {serviceCategories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => setActiveServiceCategory(category.id)}
-                className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
-                  activeServiceCategory === category.id
-                    ? 'bg-gradient-to-r from-yellow-500 to-yellow-400 text-white shadow-lg'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {category.name}
-              </button>
-            ))}
-          </div>
-
-          {/* Service Cards */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services[activeServiceCategory as keyof typeof services].map((service, index) => (
-              <Card key={index} className="card-hover border-0 shadow-lg">
-                <CardHeader className="text-center">
-                  <div className="service-icon">
-                    {service.icon}
-                  </div>
-                  <CardTitle className="text-xl">{service.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600 text-center">{service.description}</p>
-                </CardContent>
-              </Card>
-            ))}
+          {/* Nowy FeatureCarousel dla kategorii */}
+          <div className="flex justify-center">
+            <FeatureCarousel
+              categories={serviceCategories}
+              allServices={services}
+            />
           </div>
         </div>
       </section>
