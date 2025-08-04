@@ -1,0 +1,27 @@
+# USŁUGI PODOLOGICZNE - LISTA DLA STRONY WWW
+
+## Kategorie usług do wykorzystania na stronie:
+
+### PODSTAWOWE ZABIEGI:
+- Konsultacja podologiczna
+- Podstawowy zabieg podologiczny
+- Obcięcie paznokci
+- Pękające pięty
+
+### ZABIEGI SPECJALISTYCZNE:
+- Usuwanie odcisków i modzeli
+- Leczenie brodawek
+- Rekonstrukcja paznokci
+- Badanie mykologiczne
+
+### KOREKCJA I ORTOPEDIA:
+- Leczenie wrastających paznokci
+- Tamponada
+- Orteza
+- Separator palców
+- Klin silikonowy
+
+### USŁUGI DODATKOWE:
+- Tapping (kinesiotaping)
+- Wizyty domowe
+- Leczenie onycholizy
