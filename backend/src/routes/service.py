@@ -3,7 +3,8 @@ from __future__ import annotations
 from decimal import Decimal
 from typing import Any
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
+from sqlalchemy.exc import SQLAlchemyError
 
 from src.models import Service, ServiceCategory, db
 
@@ -31,11 +32,17 @@ def create_category() -> Any:
     if existing:
         return jsonify({"error": "Kategoria o tej nazwie już istnieje"}), 409
 
-    category = ServiceCategory()
-    category.name = name
-    category.description = description
-    db.session.add(category)
-    db.session.commit()
+    try:
+        category = ServiceCategory()
+        category.name = name
+        category.description = description
+        db.session.add(category)
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.exception("Błąd podczas tworzenia kategorii")
+        return jsonify({"error": "Nie udało się utworzyć kategorii"}), 500
+
     return jsonify(category.to_dict()), 201
 
 
@@ -59,9 +66,15 @@ def update_category(category_id: int) -> Any:
     if conflict:
         return jsonify({"error": "Inna kategoria posiada tę nazwę"}), 409
 
-    category.name = name
-    category.description = description
-    db.session.commit()
+    try:
+        category.name = name
+        category.description = description
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.exception("Błąd podczas aktualizacji kategorii")
+        return jsonify({"error": "Nie udało się zaktualizować kategorii"}), 500
+
     return jsonify(category.to_dict())
 
 
@@ -73,8 +86,14 @@ def delete_category(category_id: int) -> Any:
             {"error": "Usuń lub przenieś usługi przed usunięciem kategorii"}
         ), 400
 
-    db.session.delete(category)
-    db.session.commit()
+    try:
+        db.session.delete(category)
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.exception("Błąd podczas usuwania kategorii")
+        return jsonify({"error": "Nie udało się usunąć kategorii"}), 500
+
     return jsonify({"message": "Kategoria została usunięta"})
 
 
@@ -115,15 +134,21 @@ def create_service() -> Any:
     if category is None:
         return jsonify({"error": "Wybrana kategoria nie istnieje"}), 404
 
-    service = Service()
-    service.name = name
-    service.description = description
-    service.price = price
-    service.duration_minutes = duration_minutes
-    service.is_active = is_active
-    service.category = category
-    db.session.add(service)
-    db.session.commit()
+    try:
+        service = Service()
+        service.name = name
+        service.description = description
+        service.price = price
+        service.duration_minutes = duration_minutes
+        service.is_active = is_active
+        service.category = category
+        db.session.add(service)
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.exception("Błąd podczas tworzenia usługi")
+        return jsonify({"error": "Nie udało się utworzyć usługi"}), 500
+
     return jsonify(service.to_dict()), 201
 
 
@@ -156,20 +181,33 @@ def update_service(service_id: int) -> Any:
     if category is None:
         return jsonify({"error": "Wybrana kategoria nie istnieje"}), 404
 
-    service.name = name
-    service.description = description
-    service.price = price
-    service.duration_minutes = duration_minutes
-    service.is_active = is_active
-    service.category = category
+    try:
+        service.name = name
+        service.description = description
+        service.price = price
+        service.duration_minutes = duration_minutes
+        service.is_active = is_active
+        service.category = category
 
-    db.session.commit()
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.exception("Błąd podczas aktualizacji usługi")
+        return jsonify({"error": "Nie udało się zaktualizować usługi"}), 500
+
     return jsonify(service.to_dict())
 
 
 @service_bp.route("/services/<int:service_id>", methods=["DELETE"])
 def delete_service(service_id: int) -> Any:
     service = Service.query.get_or_404(service_id)
-    db.session.delete(service)
-    db.session.commit()
+
+    try:
+        db.session.delete(service)
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.exception("Błąd podczas usuwania usługi")
+        return jsonify({"error": "Nie udało się usunąć usługi"}), 500
+
     return jsonify({"message": "Usługa została usunięta"})
