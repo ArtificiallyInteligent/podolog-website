@@ -9,6 +9,17 @@
 2. **Sprawdź kompatybilność składni ze wszystkimi używanymi bibliotekami**
 3. **NIE mieszaj składni różnych wersji Tailwind CSS**
 
+### 🐍 BACKEND (Python / Flask) – WYMÓG AKTYWACJI VENV
+- **ABSOLUTNY WARUNEK**: Przed **KAŻDĄ** komendą `python`, `pip` lub `python3` w terminalu **OBOWIĄZKOWO** dodaj prefix PowerShell, który:
+  1. Sprawdza, czy środowisko `.venv` jest aktywne (`$env:VIRTUAL_ENV`).
+  2. Jeśli **NIE** jest aktywne – uruchamia je z podanej ścieżki.
+  3. Następnie wykonuje właściwą komendę `python`.
+
+- **Format komendy (pwsh)**:
+```pwsh
+if (-not $env:VIRTUAL_ENV) { & "C:\Users\rogue\podolog-website\.venv\Scripts\Activate.ps1" }; python <twoja_komenda>
+```
+
 ### 🚨 TAILWIND CSS v4.x - ZASADY BEZWZGLĘDNE:
 - **UŻYWAMY TYLKO: @tailwindcss/vite v4.1.11**
 - **@import "tailwindcss" zamiast starszych importów**

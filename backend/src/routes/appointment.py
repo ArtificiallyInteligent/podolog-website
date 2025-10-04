@@ -6,6 +6,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm.attributes import InstrumentedAttribute
 
 from src.models.appointment import Appointment, db
+from src.utils.email_utils import send_appointment_notification
 
 appointment_bp = Blueprint("appointment", __name__)
 
@@ -84,6 +85,16 @@ def create_appointment():
     try:
         db.session.add(appointment)
         db.session.commit()
+
+        # Wyślij email z powiadomieniem
+        appointment_dict = appointment.to_dict()
+        email_sent = send_appointment_notification(appointment_dict)
+
+        if not email_sent:
+            current_app.logger.warning(
+                f"Rezerwacja utworzona (ID: {appointment.id}), ale nie udało się wysłać emaila"
+            )
+
     except SQLAlchemyError:
         db.session.rollback()
         current_app.logger.exception("Błąd podczas zapisu rezerwacji")

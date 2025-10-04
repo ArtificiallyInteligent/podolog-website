@@ -7,6 +7,7 @@ import {
 	Clock3,
 	Layers,
 	List,
+	Mail,
 	Menu,
 	PenLine,
 	Plus,
@@ -91,6 +92,13 @@ type CategoryFormState = {
 	description: string;
 };
 
+type AppSettings = {
+	notification_email: string;
+	clinic_name: string;
+	mail_username: string;
+	mail_password: string;
+};
+
 const initialServiceForm: ServiceFormState = {
 	name: "",
 	description: "",
@@ -144,10 +152,17 @@ const AdminDashboard: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [isSavingService, setIsSavingService] = useState(false);
 	const [isSavingCategory, setIsSavingCategory] = useState(false);
+	const [isSavingSettings, setIsSavingSettings] = useState(false);
 	const [filterStatus, setFilterStatus] = useState<
 		"all" | Appointment["status"]
 	>("all");
 	const [apiError, setApiError] = useState<string | null>(null);
+	const [settings, setSettings] = useState<AppSettings>({
+		notification_email: "",
+		clinic_name: "",
+		mail_username: "",
+		mail_password: "",
+	});
 
 	const fetchServices = useCallback(async () => {
 		const response = await fetch("/api/services");
@@ -185,6 +200,35 @@ const AdminDashboard: React.FC = () => {
 		setSummary(data);
 	}, []);
 
+	const fetchSettings = useCallback(async () => {
+		try {
+			const response = await fetch("/api/settings");
+			if (!response.ok) {
+				throw new Error("Nie udało się pobrać ustawień");
+			}
+			const data: Array<{ key: string; value: string | null }> =
+				await response.json();
+
+			const settingsObj: AppSettings = {
+				notification_email: "",
+				clinic_name: "",
+				mail_username: "",
+				mail_password: "",
+			};
+
+			data.forEach((item) => {
+				if (item.key in settingsObj) {
+					settingsObj[item.key as keyof AppSettings] =
+						item.value || "";
+				}
+			});
+
+			setSettings(settingsObj);
+		} catch (error) {
+			console.error("Błąd podczas pobierania ustawień:", error);
+		}
+	}, []);
+
 	const fetchAll = useCallback(async () => {
 		setIsLoading(true);
 		setApiError(null);
@@ -194,6 +238,7 @@ const AdminDashboard: React.FC = () => {
 				fetchCategories(),
 				fetchAppointments(),
 				fetchSummary(),
+				fetchSettings(),
 			]);
 		} catch (error) {
 			if (error instanceof Error) {
@@ -206,7 +251,13 @@ const AdminDashboard: React.FC = () => {
 		} finally {
 			setIsLoading(false);
 		}
-	}, [fetchAppointments, fetchCategories, fetchServices, fetchSummary]);
+	}, [
+		fetchAppointments,
+		fetchCategories,
+		fetchServices,
+		fetchSummary,
+		fetchSettings,
+	]);
 
 	useEffect(() => {
 		void fetchAll();
@@ -465,6 +516,65 @@ const AdminDashboard: React.FC = () => {
 		}
 	};
 
+	const handleSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { name, value } = e.target;
+		setSettings((prev) => ({
+			...prev,
+			[name]: value,
+		}));
+	};
+
+	const handleSettingsSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+		setIsSavingSettings(true);
+		setApiError(null);
+
+		try {
+			const settingsArray = Object.entries(settings).map(
+				([key, value]) => ({
+					key,
+					value,
+					description: getSettingDescription(key),
+				})
+			);
+
+			const response = await fetch("/api/settings/bulk", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ settings: settingsArray }),
+			});
+
+			if (!response.ok) {
+				const errorData = await response.json().catch(() => ({}));
+				throw new Error(
+					errorData.error || "Nie udało się zapisać ustawień"
+				);
+			}
+
+			await fetchSettings();
+			alert("Ustawienia zostały zapisane pomyślnie!");
+		} catch (error) {
+			if (error instanceof Error) {
+				setApiError(error.message);
+			} else {
+				setApiError("Wystąpił błąd podczas zapisywania ustawień");
+			}
+		} finally {
+			setIsSavingSettings(false);
+		}
+	};
+
+	const getSettingDescription = (key: string): string => {
+		const descriptions: Record<string, string> = {
+			notification_email:
+				"Adres email, na który będą przychodzić powiadomienia o nowych rezerwacjach",
+			clinic_name: "Nazwa gabinetu wyświetlana w emailach",
+			mail_username: "Adres email Gmail używany do wysyłki powiadomień",
+			mail_password: "Hasło aplikacji Gmail (nie zwykłe hasło!)",
+		};
+		return descriptions[key] || "";
+	};
+
 	const filteredAppointments = useMemo(() => {
 		if (filterStatus === "all") {
 			return appointments;
@@ -558,6 +668,15 @@ const AdminDashboard: React.FC = () => {
 								>
 									<Tag className="h-4 w-4 text-amber-400" />
 									Cennik
+								</a>
+							</li>
+							<li>
+								<a
+									href="#settings"
+									className="flex items-center gap-3 rounded-xl px-4 py-3 transition-colors hover:bg-slate-800/80"
+								>
+									<Settings className="h-4 w-4 text-purple-400" />
+									Ustawienia
 								</a>
 							</li>
 						</ul>
@@ -1599,6 +1718,194 @@ const AdminDashboard: React.FC = () => {
 									)
 								)}
 							</div>
+						</section>
+
+						<section className="space-y-6" id="settings">
+							<div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+								<div>
+									<h3 className="text-2xl font-semibold text-white">
+										Ustawienia aplikacji
+									</h3>
+									<p className="mt-1 text-sm text-slate-400">
+										Skonfiguruj powiadomienia email i dane
+										gabinetu
+									</p>
+								</div>
+							</div>
+
+							<Card className="border border-slate-800/70 bg-slate-900/70">
+								<CardHeader>
+									<CardTitle className="flex items-center gap-2 text-xl text-white">
+										<Mail className="h-5 w-5 text-purple-400" />
+										Konfiguracja powiadomień email
+									</CardTitle>
+									<p className="text-sm text-slate-400">
+										Ustaw adres email, na który będą
+										przychodzić powiadomienia o nowych
+										rezerwacjach
+									</p>
+								</CardHeader>
+								<CardContent>
+									<form
+										onSubmit={handleSettingsSubmit}
+										className="space-y-6"
+									>
+										<div className="grid gap-6 md:grid-cols-2">
+											<div>
+												<label
+													htmlFor="notification_email"
+													className="text-xs font-medium uppercase tracking-wide text-slate-400"
+												>
+													Email odbiorcy powiadomień *
+												</label>
+												<Input
+													id="notification_email"
+													name="notification_email"
+													type="email"
+													value={
+														settings.notification_email
+													}
+													onChange={
+														handleSettingsChange
+													}
+													placeholder="kontakt@gabinet.pl"
+													className="mt-1 border-slate-700 bg-slate-950/80 text-slate-100"
+													required
+												/>
+												<p className="mt-1 text-xs text-slate-500">
+													Na ten adres będą
+													przychodzić powiadomienia o
+													nowych rezerwacjach
+												</p>
+											</div>
+
+											<div>
+												<label
+													htmlFor="clinic_name"
+													className="text-xs font-medium uppercase tracking-wide text-slate-400"
+												>
+													Nazwa gabinetu
+												</label>
+												<Input
+													id="clinic_name"
+													name="clinic_name"
+													type="text"
+													value={settings.clinic_name}
+													onChange={
+														handleSettingsChange
+													}
+													placeholder="Gabinet Podologiczny"
+													className="mt-1 border-slate-700 bg-slate-950/80 text-slate-100"
+												/>
+												<p className="mt-1 text-xs text-slate-500">
+													Wyświetlana w emailach z
+													powiadomieniami
+												</p>
+											</div>
+										</div>
+
+										<div className="rounded-xl border border-amber-500/30 bg-amber-950/40 px-4 py-3">
+											<p className="text-sm font-medium text-amber-200">
+												⚠️ Konfiguracja Gmail
+											</p>
+											<p className="mt-2 text-xs text-amber-200/80">
+												Aby wysyłać emaile przez Gmail,
+												musisz wygenerować{" "}
+												<strong>hasło aplikacji</strong>
+												:
+											</p>
+											<ol className="mt-2 list-decimal list-inside space-y-1 text-xs text-amber-200/80">
+												<li>
+													Przejdź do ustawień konta
+													Google
+												</li>
+												<li>
+													Włącz weryfikację dwuetapową
+												</li>
+												<li>
+													Wygeneruj hasło aplikacji
+													dla "Poczta"
+												</li>
+												<li>
+													Użyj wygenerowanego hasła
+													poniżej
+												</li>
+											</ol>
+										</div>
+
+										<div className="grid gap-6 md:grid-cols-2">
+											<div>
+												<label
+													htmlFor="mail_username"
+													className="text-xs font-medium uppercase tracking-wide text-slate-400"
+												>
+													Email Gmail (nadawca)
+												</label>
+												<Input
+													id="mail_username"
+													name="mail_username"
+													type="email"
+													value={
+														settings.mail_username
+													}
+													onChange={
+														handleSettingsChange
+													}
+													placeholder="twoj-email@gmail.com"
+													className="mt-1 border-slate-700 bg-slate-950/80 text-slate-100"
+												/>
+												<p className="mt-1 text-xs text-slate-500">
+													Adres Gmail, z którego będą
+													wysyłane powiadomienia
+												</p>
+											</div>
+
+											<div>
+												<label
+													htmlFor="mail_password"
+													className="text-xs font-medium uppercase tracking-wide text-slate-400"
+												>
+													Hasło aplikacji Gmail
+												</label>
+												<Input
+													id="mail_password"
+													name="mail_password"
+													type="password"
+													value={
+														settings.mail_password
+													}
+													onChange={
+														handleSettingsChange
+													}
+													placeholder="••••••••••••••••"
+													className="mt-1 border-slate-700 bg-slate-950/80 text-slate-100"
+												/>
+												<p className="mt-1 text-xs text-slate-500">
+													Hasło aplikacji (NIE zwykłe
+													hasło Gmail!)
+												</p>
+											</div>
+										</div>
+
+										<div className="flex items-center gap-3 pt-4 border-t border-slate-800">
+											<Button
+												type="submit"
+												className="bg-emerald-600 hover:bg-emerald-500"
+												disabled={isSavingSettings}
+											>
+												<Settings className="mr-2 h-4 w-4" />
+												{isSavingSettings
+													? "Zapisywanie..."
+													: "Zapisz ustawienia"}
+											</Button>
+											<p className="text-xs text-slate-500">
+												Zmiany zostaną zastosowane
+												natychmiast
+											</p>
+										</div>
+									</form>
+								</CardContent>
+							</Card>
 						</section>
 
 						<footer className="border-t border-slate-900/60 pt-6 text-xs text-slate-500">

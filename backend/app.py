@@ -6,14 +6,29 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from flask import Flask, send_from_directory
 from flask_cors import CORS
+from flask_mail import Mail
 from src.models import Service, ServiceCategory, db
 from src.routes.user import user_bp
 from src.routes.appointment import appointment_bp
 from src.routes.service import service_bp
 from src.routes.admin import admin_bp
+from src.routes.settings import settings_bp
 
 app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), "static"))
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "a-very-secret-dev-key")
+
+# Konfiguracja Flask-Mail dla Gmail
+app.config["MAIL_SERVER"] = os.environ.get("MAIL_SERVER", "smtp.gmail.com")
+app.config["MAIL_PORT"] = int(os.environ.get("MAIL_PORT", "587"))
+app.config["MAIL_USE_TLS"] = os.environ.get("MAIL_USE_TLS", "true").lower() == "true"
+app.config["MAIL_USE_SSL"] = os.environ.get("MAIL_USE_SSL", "false").lower() == "true"
+app.config["MAIL_USERNAME"] = os.environ.get("MAIL_USERNAME", "")
+app.config["MAIL_PASSWORD"] = os.environ.get("MAIL_PASSWORD", "")
+app.config["MAIL_DEFAULT_SENDER"] = os.environ.get(
+    "MAIL_DEFAULT_SENDER", app.config["MAIL_USERNAME"]
+)
+
+mail = Mail(app)
 
 # Włączenie CORS dla wszystkich tras
 CORS(app)
@@ -22,6 +37,7 @@ app.register_blueprint(user_bp, url_prefix="/api")
 app.register_blueprint(appointment_bp, url_prefix="/api")
 app.register_blueprint(service_bp, url_prefix="/api")
 app.register_blueprint(admin_bp, url_prefix="/api")
+app.register_blueprint(settings_bp, url_prefix="/api")
 
 # uncomment if you need to use database
 app.config["SQLALCHEMY_DATABASE_URI"] = (
